@@ -3,43 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anondo Downloader - Fixed</title>
+    <title>Anondo Ultimate Downloader</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; text-align: center; padding: 20px; }
-        .container { background: #1e293b; padding: 30px; border-radius: 20px; max-width: 450px; margin: 50px auto; border: 1px solid #38bdf8; }
-        h2 { color: #38bdf8; }
-        input, select, button { width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: 1px solid #334155; box-sizing: border-box; font-size: 16px; }
-        input, select { background: #0f172a; color: white; }
-        button { background: #38bdf8; color: #0f172a; font-weight: bold; cursor: pointer; border: none; }
-        button:hover { background: #0ea5e9; }
-        .footer { margin-top: 20px; font-size: 14px; color: #94a3b8; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background: #1e293b; padding: 30px; border-radius: 20px; width: 90%; max-width: 450px; border: 1px solid #38bdf8; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
+        h2 { color: #38bdf8; margin-bottom: 20px; font-size: 24px; }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; margin-bottom: 5px; color: #94a3b8; font-size: 14px; }
+        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; outline: none; }
+        input:focus { border-color: #38bdf8; }
+        button { width: 100%; padding: 15px; margin-top: 20px; border-radius: 10px; border: none; background: #38bdf8; color: #0f172a; font-weight: bold; font-size: 18px; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #0ea5e9; transform: translateY(-2px); }
+        .footer-text { margin-top: 20px; font-size: 13px; color: #64748b; }
+        .footer-text a { color: #38bdf8; text-decoration: none; }
+        optgroup { background: #1e293b; color: #38bdf8; }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>📥 Anondo Downloader</h2>
-        <p>YouTube, FB, Insta Bypass Fixed!</p>
-        
         <form action="/download" method="POST">
-            <input type="text" name="url" placeholder="Paste your link here..." required>
+            <div class="input-group">
+                <label>Video/Music Link</label>
+                <input type="text" name="url" placeholder="Paste link (YouTube, FB, Insta...)" required>
+            </div>
             
-            <select name="format_type">
-                <optgroup label="Video">
-                    <option value="1080">1080p Quality</option>
-                    <option value="720" selected>720p Quality</option>
-                    <option value="360">360p Quality</option>
-                </optgroup>
-                <optgroup label="Audio">
-                    <option value="128k">MP3 Audio</option>
-                </optgroup>
-            </select>
+            <div class="input-group">
+                <label>Select Quality</label>
+                <select name="format_type">
+                    <optgroup label="🎬 Video (MP4)">
+                        <option value="1080">1080p Full HD</option>
+                        <option value="720" selected>720p HD</option>
+                        <option value="480">480p SD</option>
+                        <option value="360">360p Low</option>
+                        <option value="240">240p Very Low</option>
+                        <option value="144">144p Small</option>
+                    </optgroup>
+                    <optgroup label="🎵 Music (MP3)">
+                        <option value="320k">320kbps High Quality</option>
+                        <option value="256k">256kbps Premium</option>
+                        <option value="128k">128kbps Standard</option>
+                        <option value="64k">64kbps Data Saver</option>
+                    </optgroup>
+                </select>
+            </div>
             
-            <button type="submit">Download Now</button>
+            <button type="submit">Start Download</button>
         </form>
-        
-        <div class="footer">
-            <a href="https://anondo.bro.bd" style="color: #94a3b8; text-decoration: none;">← Back to Hub</a>
-        </div>
+        <p class="footer-text">Design for Termux & Web by <a href="https://anondo.bro.bd">Anondo</a></p>
     </div>
 </body>
 </html>
