@@ -1,12 +1,8 @@
 import os
-from flask import Flask, render_template, request, send_file
-import yt_dlp
+import requests
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
-
-DOWNLOAD_FOLDER = "downloads"
-if not os.path.exists(DOWNLOAD_FOLDER):
-    os.makedirs(DOWNLOAD_FOLDER)
 
 @app.route('/')
 def index():
@@ -18,51 +14,41 @@ def download():
     choice = request.form.get('format_type')
     
     if not url:
-        return "URL missing!"
+        return "Link kothay? Age link din dost!"
 
-    ydl_opts = {
-        'outtmpl': f'{DOWNLOAD_FOLDER}/%(title)s.%(ext)s',
-        'referer': 'https://www.google.com/',
-        'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'nocheckcertificate': True,
-        'quiet': True,
+    api_url = "https://api.cobalt.tools/api/json"
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    }
+    
+    # অডিও কোয়ালিটি চেক করা হচ্ছে (যদি অপশনে 'k' থাকে)
+    is_audio = True if 'k' in choice else False
+    bitrate = choice.replace('k', '') if is_audio else "128"
+    
+    payload = {
+        "url": url,
+        "vQuality": choice if not is_audio else "720",
+        "isAudioOnly": is_audio,
+        "aFormat": "mp3",
+        "aBitrate": bitrate, # অডিও বিটরেট সেট করা হলো
+        "filenamePattern": "pretty"
     }
 
-    # অডিও অপশন চেক (যদি মান এর শেষে 'k' থাকে)
-    if choice.endswith('k'):
-        bitrate = choice.replace('k', '')
-        ydl_opts.update({
-            'format': 'bestaudio/best',
-            'postprocessors': [{
-                'key': 'FFmpegExtractAudio',
-                'preferredcodec': 'mp3',
-                'preferredquality': bitrate,
-            }],
-        })
-    # ভিডিও অপশন (3gp বা mp4)
-    else:
-        quality = choice.replace('3gp', '')
-        if '3gp' in choice:
-            # 3GP ফরম্যাট সাধারণত কম রেজোলিউশনে থাকে
-            ydl_opts['format'] = f'bestvideo[ext=3gp][height<={quality}]+bestaudio/best[height<={quality}]/best[ext=3gp]'
-        else:
-            ydl_opts['format'] = f'bestvideo[height<={quality}][ext=mp4]+bestaudio[ext=m4a]/best[height<={quality}]'
-            ydl_opts['merge_output_format'] = 'mp4'
-
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            info = ydl.extract_info(url, download=True)
-            filename = ydl.prepare_filename(info)
-            
-            if choice.endswith('k'):
-                filename = os.path.splitext(filename)[0] + ".mp3"
-            elif '3gp' in choice and not filename.endswith('.3gp'):
-                filename = os.path.splitext(filename)[0] + ".3gp"
+        response = requests.post(api_url, headers=headers, json=payload)
+        result = response.json()
 
-            return send_file(filename, as_attachment=True)
-            
+        if result.get("status") in ["stream", "redirect"]:
+            return redirect(result["url"])
+        elif result.get("status") == "picker":
+            return redirect(result["picker"][0]["url"])
+        else:
+            return f"Error: {result.get('text', 'Kisu ekta vul hoyeche, abar try koro.')}"
+
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Server Error: {str(e)}"
 
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
