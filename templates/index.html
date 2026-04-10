@@ -3,54 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anondo Ultimate Downloader</title>
+    <title>Anondo Downloader Pro</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { background: #1e293b; padding: 30px; border-radius: 20px; width: 90%; max-width: 450px; border: 1px solid #38bdf8; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-        h2 { color: #38bdf8; margin-bottom: 20px; font-size: 24px; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; margin-bottom: 5px; color: #94a3b8; font-size: 14px; }
-        input, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 16px; outline: none; }
-        input:focus { border-color: #38bdf8; }
-        button { width: 100%; padding: 15px; margin-top: 20px; border-radius: 10px; border: none; background: #38bdf8; color: #0f172a; font-weight: bold; font-size: 18px; cursor: pointer; transition: 0.3s; }
-        button:hover { background: #0ea5e9; transform: translateY(-2px); }
-        .footer-text { margin-top: 20px; font-size: 13px; color: #64748b; }
-        .footer-text a { color: #38bdf8; text-decoration: none; }
-        optgroup { background: #1e293b; color: #38bdf8; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .box { background: #1e293b; padding: 30px; border-radius: 20px; width: 90%; max-width: 450px; border: 1px solid #e11d48; box-shadow: 0 10px 30px rgba(225, 29, 72, 0.3); text-align: center; }
+        h2 { color: #e11d48; margin-bottom: 10px; font-size: 26px; }
+        input, select { width: 100%; padding: 14px; margin: 12px 0; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; border-radius: 10px; border: none; background: #e11d48; color: white; font-weight: bold; font-size: 18px; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        button:hover { background: #be123c; transform: translateY(-2px); }
+        .footer { margin-top: 20px; font-size: 12px; color: #94a3b8; }
+        optgroup { background: #1e293b; color: #e11d48; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>📥 Anondo Downloader</h2>
+    <div class="box">
+        <h2>🚀 Anondo Pro</h2>
+        <p style="font-size: 14px; color: #94a3b8;">Fast Snaptube Style Downloader</p>
         <form action="/download" method="POST">
-            <div class="input-group">
-                <label>Video/Music Link</label>
-                <input type="text" name="url" placeholder="Paste link (YouTube, FB, Insta...)" required>
-            </div>
-            
-            <div class="input-group">
-                <label>Select Quality</label>
-                <select name="format_type">
-                    <optgroup label="🎬 Video (MP4)">
-                        <option value="1080">1080p Full HD</option>
-                        <option value="720" selected>720p HD</option>
-                        <option value="480">480p SD</option>
-                        <option value="360">360p Low</option>
-                        <option value="240">240p Very Low</option>
-                        <option value="144">144p Small</option>
-                    </optgroup>
-                    <optgroup label="🎵 Music (MP3)">
-                        <option value="320k">320kbps High Quality</option>
-                        <option value="256k">256kbps Premium</option>
-                        <option value="128k">128kbps Standard</option>
-                        <option value="64k">64kbps Data Saver</option>
-                    </optgroup>
-                </select>
-            </div>
-            
-            <button type="submit">Start Download</button>
+            <input type="text" name="url" placeholder="Paste link (YT, FB, TikTok, Insta...)" required>
+            <select name="format_type">
+                <optgroup label="🎬 Video Quality">
+                    <option value="1080">1080p Full HD</option>
+                    <option value="720" selected>720p HD</option>
+                    <option value="480">480p SD</option>
+                    <option value="360">360p Low</option>
+                    <option value="240">240p Quality</option>
+                    <option value="144">144p Quality</option>
+                </optgroup>
+                <optgroup label="🎵 Music Quality">
+                    <option value="320k">320kbps High</option>
+                    <option value="256k">256kbps Premium</option>
+                    <option value="128k">128kbps Standard</option>
+                    <option value="64k">64kbps Low</option>
+                </optgroup>
+            </select>
+            <button type="submit">Download Now</button>
         </form>
-        <p class="footer-text">Design for Termux & Web by <a href="https://anondo.bro.bd">Anondo</a></p>
+        <div class="footer">Design by <a href="https://anondo.bro.bd" style="color: #e11d48; text-decoration: none;">Anondo</a></div>
     </div>
 </body>
 </html>
