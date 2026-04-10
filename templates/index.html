@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anondo Ultimate Downloader</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0f172a; color: white; text-align: center; padding: 30px; }
+        .box { background: #1e293b; padding: 25px; border-radius: 15px; max-width: 450px; margin: auto; border: 1px solid #38bdf8; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        h2 { color: #38bdf8; margin-bottom: 20px; }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #334155; background: #0f172a; color: white; }
+        button { background: #38bdf8; color: #0f172a; font-weight: bold; cursor: pointer; border: none; font-size: 16px; }
+        button:hover { background: #0ea5e9; }
+        optgroup { background: #1e293b; color: #38bdf8; }
+        a { color: #94a3b8; text-decoration: none; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h2>📥 Anondo Downloader</h2>
+        <form action="/download" method="POST">
+            <input type="text" name="url" placeholder="Paste link (FB, YT, Insta...)" required>
+            
+            <select name="format_type">
+                <optgroup label="MP4 Video">
+                    <option value="1080">1080p MP4</option>
+                    <option value="720" selected>720p MP4</option>
+                    <option value="480">480p MP4</option>
+                    <option value="360">360p MP4</option>
+                    <option value="240">240p MP4</option>
+                    <option value="144">144p MP4</option>
+                </optgroup>
+                
+                <optgroup label="3GP Video">
+                    <option value="3603gp">360p 3GP</option>
+                    <option value="1443gp">144p 3GP</option>
+                </optgroup>
+
+                <optgroup label="MP3 Audio">
+                    <option value="560k">560kbps (Ultra)</option>
+                    <option value="320k">320kbps (High)</option>
+                    <option value="128k">128kbps (Standard)</option>
+                    <option value="64k">64kbps (Low)</option>
+                </optgroup>
+            </select>
+            
+            <button type="submit">Download Now</button>
+        </form>
+        <br>
+        <a href="https://anondo.bro.bd">← Back to Hub</a>
+    </div>
+</body>
+</html>
