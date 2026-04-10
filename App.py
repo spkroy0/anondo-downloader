@@ -14,44 +14,47 @@ def download():
     quality = request.form.get('format_type')
 
     if not url:
-        return "Dost, link ta age dao!"
+        return "URL কই ভাই? আগে লিঙ্ক দিন!"
 
-    # এটি একটি পাওয়ারফুল পাবলিক এপিআই যা ইউটিউব ব্লক বাইপাস করে
-    # আমরা রেজোলিউশন এবং টাইপ অনুযায়ী এপিআই কল কাস্টমাইজ করছি
-    is_audio = "k" in quality
+    # Publer বা এই জাতীয় সাইটগুলো যে ধরণের API এন্ডপয়েন্ট ব্যবহার করে (Updated Cobalt)
+    api_url = "https://api.cobalt.tools/api/json"
     
-    # ব্যাকআপ এবং মেইন এপিআই এর সংমিশ্রণ
-    # আমরা এমন একটি এপিআই ব্যবহার করছি যা সরাসরি স্ট্রিমিং লিঙ্ক দেয়
-    api_url = "https://api.cobalt.tools/api/json" # লেটেস্ট ভার্সন ট্রাই করা হচ্ছে
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+    }
+    
+    # অডিও নাকি ভিডিও চেক
+    is_audio = "k" in quality
     
     payload = {
         "url": url,
         "videoQuality": quality.replace('k', '') if not is_audio else "720",
         "downloadMode": "audio" if is_audio else "video",
         "audioFormat": "mp3",
-        "filenameStyle": "pretty"
-    }
-    
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        "filenameStyle": "pretty",
+        "youtubeVideoCodec": "h264" # এটি ভিডিও কোয়ালিটি স্টেবল রাখতে সাহায্য করে
     }
 
     try:
-        response = requests.post(api_url, json=payload, headers=headers)
-        data = response.json()
+        response = requests.post(api_url, headers=headers, json=payload)
+        
+        # যদি এই API সার্ভারটি ব্যস্ত থাকে, তবে আমরা একটি প্রো-ব্যাকআপ মেথড ব্যবহার করব
+        if response.status_code != 200:
+            fallback_url = f"https://downloader.nocopyright.workers.dev/?url={url}"
+            return redirect(fallback_url)
+            
+        result = response.json()
 
-        if "url" in data:
-            return redirect(data["url"])
+        if "url" in result:
+            return redirect(result["url"])
         else:
-            # যদি কোবাল্ট এরর দেয়, তবে সরাসরি ব্যাকআপ মেথডে পাঠিয়ে দেবে
-            backup_api = f"https://api.vyt-dlp.com/download?url={url}&quality={quality}"
-            return redirect(backup_api)
+            # ব্যাকআপ লিঙ্ক
+            return redirect(f"https://downloader.nocopyright.workers.dev/?url={url}")
 
     except Exception as e:
-        # সব ফেল করলে এই ইউনিভার্সাল ডাউনলোডার কাজ করবেই
-        fallback = f"https://downloader.nocopyright.workers.dev/?url={url}"
-        return redirect(fallback)
+        # সব ফেল করলে এই ইউনিভার্সাল গেটওয়ে কাজ করবেই
+        return redirect(f"https://downloader.nocopyright.workers.dev/?url={url}")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
