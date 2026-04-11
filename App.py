@@ -14,15 +14,16 @@ def download():
     quality = request.form.get('format_type')
 
     if not url:
-        return "URL কই দোস্ত? আগে লিঙ্ক দাও!"
+        return "Link কই ভাই? আগে লিঙ্ক দিন!"
 
-    # Snaptube স্টাইল API (Cobalt Updated Instance)
+    # Cobalt API (Updated Instance)
     api_url = "https://api.cobalt.tools/api/json"
     
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
-        "User-Agent": "Mozilla/5.0 (Linux; Android 10; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
+        # Snaptube স্টাইল মোবাইল ইউজার এজেন্ট
+        "User-Agent": "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36"
     }
     
     is_audio = "k" in quality
@@ -33,26 +34,25 @@ def download():
         "downloadMode": "audio" if is_audio else "video",
         "audioFormat": "mp3",
         "filenameStyle": "pretty",
-        "youtubeVideoCodec": "h264",
-        "isAudioMuted": False
+        "youtubeVideoCodec": "h264"
     }
 
     try:
-        # মেইন এপিআই কল
-        response = requests.post(api_url, headers=headers, json=payload, timeout=12)
+        # মেইন মেথড
+        response = requests.post(api_url, headers=headers, json=payload, timeout=15)
         
         if response.status_code == 200:
             result = response.json()
             if "url" in result:
                 return redirect(result["url"])
         
-        # ব্যাকআপ ১: Snaptube এর মতো প্রক্সি সার্ভিস
+        # ব্যাকআপ ১: যদি মেইন API ফেল করে (Direct Proxy)
         fallback_url = f"https://downloader.nocopyright.workers.dev/?url={url}"
         return redirect(fallback_url)
 
-    except:
-        # ব্যাকআপ ২: কোনো কিছুই কাজ না করলে
-        return redirect(f"https://www.y2mate.com/youtube-vi/{url.split('=')[-1]}")
+    except Exception as e:
+        # ব্যাকআপ ২: কোনো কিছুই কাজ না করলে ইউনিভার্সাল রিডাইরেক্ট
+        return redirect(f"https://www.y2mate.com/youtube-vi/{url.split('/')[-1]}")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
