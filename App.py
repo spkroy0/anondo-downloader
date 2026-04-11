@@ -1,59 +1,31 @@
 import os
-import requests
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
+# গ্যালারিতে ছবি এবং প্রম্পট ডেটা (পরবর্তীতে আপনি এটি ডাটাবেস থেকে আনতে পারেন)
+gallery_images = [
+    {
+        "id": "p1",
+        "title": "Cinematic Cyberpunk Portrait",
+        "prompt": "Hyper-realistic portrait of a cyberpunk hacker, neon city reflection in sunglasses, cinematic lighting, 8k, Unreal Engine 5 render.",
+        "image_file": "cyberpunk_hacker.jpg" # static/images ಫೋಲ್ಡರ್ ಎ ತಾಕಬೆ
+    },
+    {
+        "id": "p2",
+        "title": "Fantasy Landscape at Sunset",
+        "prompt": "Epic fantasy landscape with floating islands and waterfall at sunset, golden hour lighting, photorealistic, matte painting style.",
+        "image_file": "fantasy_landscape.jpg"
+    },
+    # নতুন ছবি যোগ করতে এখানে একটি নতুন ডিকশনারি কপি করে বসিয়ে দিন
+]
+
 @app.route('/')
 def index():
-    return render_template('index.html')
-
-@app.route('/download', methods=['POST'])
-def download():
-    url = request.form.get('url')
-    quality = request.form.get('format_type')
-
-    if not url:
-        return "Link কই ভাই? আগে লিঙ্ক দিন!"
-
-    # Cobalt API (Updated Instance)
-    api_url = "https://api.cobalt.tools/api/json"
-    
-    headers = {
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-        # Snaptube স্টাইল মোবাইল ইউজার এজেন্ট
-        "User-Agent": "Mozilla/5.0 (Linux; Android 11; Pixel 5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.91 Mobile Safari/537.36"
-    }
-    
-    is_audio = "k" in quality
-    
-    payload = {
-        "url": url,
-        "videoQuality": quality.replace('k', '') if not is_audio else "720",
-        "downloadMode": "audio" if is_audio else "video",
-        "audioFormat": "mp3",
-        "filenameStyle": "pretty",
-        "youtubeVideoCodec": "h264"
-    }
-
-    try:
-        # মেইন মেথড
-        response = requests.post(api_url, headers=headers, json=payload, timeout=15)
-        
-        if response.status_code == 200:
-            result = response.json()
-            if "url" in result:
-                return redirect(result["url"])
-        
-        # ব্যাকআপ ১: যদি মেইন API ফেল করে (Direct Proxy)
-        fallback_url = f"https://downloader.nocopyright.workers.dev/?url={url}"
-        return redirect(fallback_url)
-
-    except Exception as e:
-        # ব্যাকআপ ২: কোনো কিছুই কাজ না করলে ইউনিভার্সাল রিডাইরেক্ট
-        return redirect(f"https://www.y2mate.com/youtube-vi/{url.split('/')[-1]}")
+    # gallery.html পেজে ডেটা পাঠানো হচ্ছে
+    return render_template('index.html', images=gallery_images)
 
 if __name__ == "__main__":
+    # Render বা Local এ রান করার জন্য
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
