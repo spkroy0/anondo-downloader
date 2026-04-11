@@ -3,72 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anondo AI | Prompt Gallery</title>
+    <title>HTML Editor by Anondo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #0b1120; color: white; margin: 0; padding-bottom: 50px; }
-        header { text-align: center; padding: 50px 20px; background: linear-gradient(135deg, #1e293b 0%, #0b1120 100%); border-bottom: 1px solid #334155; }
-        header h1 { font-size: 28px; color: #38bdf8; margin: 0; }
-        header p { color: #94a3b8; font-size: 14px; margin: 10px 0 25px; }
-        
-        .back-btn { color: #cbd5e1; text-decoration: none; font-size: 13px; padding: 8px 18px; border-radius: 20px; background: #0f172a; border: 1px solid #334155; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Consolas', monospace; background: #0b1120; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 30px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-        
-        .card { background: #1e293b; border-radius: 20px; overflow: hidden; border: 1px solid #334155; transition: 0.3s; }
-        .card:hover { transform: translateY(-5px); border-color: #38bdf8; }
-        .card img { width: 100%; height: 250px; object-fit: cover; display: block; }
-        
-        .card-content { padding: 15px; }
-        .card-title { font-size: 16px; font-weight: 600; color: #f8fafc; margin-bottom: 12px; }
-        
-        .prompt-box { background: #0f172a; padding: 12px; border-radius: 12px; font-size: 12px; color: #94a3b8; position: relative; border: 1px solid #334155; }
-        .prompt-text { display: block; margin-right: 45px; line-height: 1.4; height: 35px; overflow: hidden; }
-        
-        .copy-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: #38bdf8; border: none; width: 35px; height: 35px; border-radius: 8px; cursor: pointer; color: #0b1120; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .copy-btn:active { transform: translateY(-50%) scale(0.9); }
+        /* Top Heading */
+        .top-header { 
+            background: #1e293b; 
+            padding: 15px; 
+            text-align: center; 
+            border-bottom: 2px solid #38bdf8;
+        }
+        .top-header h1 { 
+            color: #38bdf8; 
+            font-size: 20px; 
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
-        #toast { visibility: hidden; min-width: 150px; background: #10b981; color: white; text-align: center; border-radius: 25px; padding: 10px; position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); z-index: 10; font-size: 13px; }
-        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        /* Desktop Mode Suggestion */
+        #desktop-notice {
+            background: #fef08a;
+            color: #854d0e;
+            padding: 8px;
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+            display: none; /* JS দিয়ে শুধু মোবাইলে দেখানো হবে */
+        }
+
+        /* Toolbar */
+        .toolbar { 
+            background: #0f172a; 
+            padding: 10px; 
+            display: flex; 
+            gap: 10px; 
+            overflow-x: auto; 
+            border-bottom: 1px solid #334155; 
+        }
+        .toolbar button { 
+            background: #334155; 
+            color: #38bdf8; 
+            border: none; 
+            padding: 8px 15px; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            cursor: pointer;
+        }
+
+        /* Editor & Preview Grid */
+        .main-content { 
+            display: flex; 
+            flex: 1; 
+            height: calc(100vh - 120px); 
+        }
+
+        /* Mobile Responsive: কলামে দেখাবে, ডেস্কটপে পাশাপাশি */
+        @media (max-width: 768px) {
+            .main-content { flex-direction: column; }
+            .editor-box, .preview-box { width: 100% !important; height: 50% !important; }
+            #desktop-notice { display: block; }
+        }
+
+        .editor-box { width: 50%; height: 100%; position: relative; border-right: 1px solid #334155; }
+        .preview-box { width: 50%; height: 100%; background: white; }
+
+        #editing, #highlighting {
+            padding: 15px; width: 100%; height: 100%;
+            font-size: 14px; line-height: 1.5;
+            position: absolute; top: 0; left: 0;
+            white-space: pre; overflow: auto;
+        }
+        #editing { background: transparent; color: transparent; caret-color: white; z-index: 1; outline: none; border: none; resize: none; }
+        #highlighting { z-index: 0; pointer-events: none; }
+
+        iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1><i class="fas fa-bolt"></i> AI Prompt Gallery</h1>
-    <p>Explore & Copy High-Quality AI Image Prompts</p>
-    <a href="https://anondo.bro.bd" class="back-btn"><i class="fas fa-arrow-left"></i> Home</a>
-</header>
-
-<div class="container">
-    {% for image in images %}
-    <div class="card">
-        <img src="{{ image.image_url }}" alt="{{ image.title }}">
-        <div class="card-content">
-            <div class="card-title">{{ image.title }}</div>
-            <div class="prompt-box">
-                <span class="prompt-text" id="{{ image.id }}">{{ image.prompt }}</span>
-                <button class="copy-btn" onclick="copyPrompt('{{ image.id }}')"><i class="fas fa-copy"></i></button>
-            </div>
-        </div>
-    </div>
-    {% endfor %}
+<div class="top-header">
+    <h1>HTML Editor by Anondo</h1>
 </div>
 
-<div id="toast">Prompt Copied!</div>
+<div id="desktop-notice">
+    <i class="fas fa-desktop"></i> Better performance er jonno Desktop Mode on koro!
+</div>
+
+<div class="toolbar">
+    <button onclick="addCode('<')"><</button>
+    <button onclick="addCode('>')">></button>
+    <button onclick="addCode('/')">/</button>
+    <button onclick="addCode('=')">=</button>
+    <button onclick="addCode('&quot;')">"</button>
+    <button onclick="addCode('!')">!</button>
+    <button onclick="addCode('{')">{</button>
+    <button onclick="addCode('}')">}</button>
+    <button onclick="updateLive()">Run <i class="fas fa-play"></i></button>
+</div>
+
+<div class="main-content">
+    <div class="editor-box">
+        <textarea id="editing" spellcheck="false" oninput="updateLive()" onkeydown="handleTab(this, event)"></textarea>
+        <pre id="highlighting" aria-hidden="true"><code class="language-html" id="highlight-content"></code></pre>
+    </div>
+    
+    <div class="preview-box">
+        <iframe id="live-preview"></iframe>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 
 <script>
-    function copyPrompt(id) {
-        const text = document.getElementById(id).innerText;
-        navigator.clipboard.writeText(text).then(() => {
-            const toast = document.getElementById("toast");
-            toast.className = "show";
-            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
-        });
+    const editArea = document.getElementById("editing");
+    const highlightArea = document.getElementById("highlight-content");
+    const previewFrame = document.getElementById("live-preview");
+
+    function updateLive() {
+        let code = editArea.value;
+
+        // Auto Tag Closer
+        if (code.endsWith(">") && !code.endsWith("/>")) {
+            const pos = editArea.selectionStart;
+            const match = code.substring(0, pos).match(/<([a-zA-Z1-6]+)>$/);
+            if (match) {
+                editArea.value = code + `</${match[1]}>`;
+                editArea.selectionStart = editArea.selectionEnd = pos;
+            }
+        }
+
+        // Highlight Update
+        highlightArea.textContent = editArea.value;
+        Prism.highlightElement(highlightArea);
+
+        // Preview Update
+        const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+        doc.open();
+        doc.write(editArea.value);
+        doc.close();
     }
+
+    function addCode(char) {
+        const start = editArea.selectionStart;
+        editArea.value = editArea.value.substring(0, start) + char + editArea.value.substring(editArea.selectionEnd);
+        editArea.selectionStart = editArea.selectionEnd = start + char.length;
+        editArea.focus();
+        updateLive();
+    }
+
+    function handleTab(el, e) {
+        if (e.key === "Tab") {
+            e.preventDefault();
+            addCode("  ");
+        }
+    }
+
+    // Scroll Sync
+    editArea.addEventListener("scroll", () => {
+        document.getElementById("highlighting").scrollTop = editArea.scrollTop;
+        document.getElementById("highlighting").scrollLeft = editArea.scrollLeft;
+    });
+
+    // Default Code
+    editArea.value = "<html>\n<body>\n  <h1 style='color:blue;'>HTML Editor by Anondo</h1>\n  <p>Start coding now...</p>\n</body>\n</html>";
+    updateLive();
 </script>
 
 </body>
