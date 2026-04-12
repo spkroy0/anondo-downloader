@@ -7,15 +7,11 @@ Compress(app)
 
 @app.route('/')
 def index():
-    # মেইন এডিটর পেজ এবং সিকিউরিটি হেডার
+    # ফ্রেশ হেডার এবং ফাইল রেন্ডারিং
     response = make_response(render_template('index.html'))
+    response.headers['X-Content-Type-Options'] = 'nosniff'
     response.headers['X-Frame-Options'] = 'SAMEORIGIN'
-    response.headers['Server'] = 'Anondo-Pro-v3.0'
     return response
-
-@app.errorhandler(404)
-def error_404(e):
-    return "<h1>404 - Not Found</h1>", 404
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
