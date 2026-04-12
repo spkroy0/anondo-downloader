@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anondo HTML Pro Editor</title>
+    <title>Html Pro editor by anondo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     
@@ -31,10 +31,8 @@
         .btn-run { background: #0369a1 !important; color: white !important; }
         .btn-pdf { background: #991b1b !important; color: white !important; }
 
-        #tag-status { background: #0f172a; padding: 5px 15px; font-size: 11px; border-bottom: 1px solid #334155; height: 32px; display: flex; align-items: center; color: #94a3b8; }
-
-        /* Editor Layout */
-        #capture-area { display: flex; flex: 1; height: calc(100vh - 210px); background: #0b1120; }
+        /* Layout */
+        .main-content { display: flex; flex: 1; height: calc(100vh - 200px); }
         .editor-box { width: 50%; height: 100%; position: relative; border-right: 1px solid #334155; background: #0d1117; }
         .preview-box { width: 50%; height: 100%; background: white; }
 
@@ -44,19 +42,19 @@
         
         iframe { width: 100%; height: 100%; border: none; }
 
-        @media (max-width: 768px) { #capture-area { flex-direction: column; } .editor-box, .preview-box { width: 100%; height: 50%; } }
+        @media (max-width: 768px) { .main-content { flex-direction: column; } .editor-box, .preview-box { width: 100%; height: 50%; } }
     </style>
 </head>
 <body>
 
 <div class="top-header">
-    <h1><i class="fas fa-terminal"></i> HTML PRO EDITOR</h1>
+    <h1><i class="fas fa-code"></i> Html Pro editor by anondo</h1>
 </div>
 
 <div class="toolbar-container">
     <div class="toolbar-row">
         <button class="btn-run" onclick="updateLive()">RUN <i class="fas fa-play"></i></button>
-        <button class="btn-pdf" onclick="downloadPDF()">PDF DOWNLOAD <i class="fas fa-file-pdf"></i></button>
+        <button class="btn-pdf" onclick="downloadPDF()">SAVE AS PDF <i class="fas fa-file-pdf"></i></button>
         <button onclick="addCode('<')"><</button>
         <button onclick="addCode('>')">></button>
         <button onclick="addCode('/')">/</button>
@@ -75,9 +73,7 @@
     </div>
 </div>
 
-<div id="tag-status">Editor Active</div>
-
-<div id="capture-area">
+<div class="main-content">
     <div class="editor-box">
         <textarea id="editing" spellcheck="false" oninput="updateLive()" onkeydown="handleKeys(event)"></textarea>
         <pre id="highlighting" aria-hidden="true"><code class="language-html" id="highlight-content"></code></pre>
@@ -95,7 +91,7 @@
     const highlightArea = document.getElementById("highlight-content");
     const previewFrame = document.getElementById("live-preview");
 
-    // ১. আপডেট লাইভ (অটো-ক্লোজ রিমুভ করা হয়েছে)
+    // ১. লাইভ আপডেট (অটো-ক্লোজ টোটালি অফ)
     function updateLive() {
         let code = editArea.value;
         highlightArea.textContent = code;
@@ -106,41 +102,36 @@
         localStorage.setItem("anondo_editor_code", code);
     }
 
-    // ২. PDF ডাউনলোড (কোড + আউটপুট ইমেজ)
+    // ২. PDF ডাউনলোড (কোড + প্রিভিউ ইমেজ)
     async function downloadPDF() {
         const btn = document.querySelector(".btn-pdf");
-        btn.innerText = "Generating...";
+        btn.innerText = "Processing...";
         
-        const doc = new jsPDF('p', 'mm', 'a4');
-        const codeText = editArea.value;
-
-        // Title
-        doc.setFontSize(16);
-        doc.text("Anondo Editor - Project Report", 10, 15);
-        
-        // Code Section
-        doc.setFontSize(10);
-        doc.setFont("courier", "normal");
-        doc.text("Source Code:", 10, 25);
-        
-        const splitCode = doc.splitTextToSize(codeText, 180);
-        doc.text(splitCode, 10, 32);
-
-        // Output Section (Capturing preview as image)
         try {
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const codeText = editArea.value;
+
+            // Page 1: Source Code
+            doc.setFontSize(16);
+            doc.text("Html Pro Editor - Source Code", 10, 15);
+            doc.setFontSize(10);
+            doc.setFont("courier", "normal");
+            const splitCode = doc.splitTextToSize(codeText, 180);
+            doc.text(splitCode, 10, 25);
+
+            // Page 2: Preview Capture
             const canvas = await html2canvas(document.getElementById("preview-capture"));
             const imgData = canvas.toDataURL('image/png');
             doc.addPage();
             doc.setFont("helvetica", "bold");
-            doc.text("Final Output (Preview):", 10, 15);
+            doc.text("Output Preview:", 10, 15);
             doc.addImage(imgData, 'PNG', 10, 20, 190, 100);
             
             doc.save("anondo_project.pdf");
-            btn.innerHTML = 'PDF DOWNLOAD <i class="fas fa-file-pdf"></i>';
         } catch (err) {
-            alert("PDF generation failed!");
-            btn.innerHTML = 'PDF DOWNLOAD <i class="fas fa-file-pdf"></i>';
+            alert("Error generating PDF!");
         }
+        btn.innerHTML = 'SAVE AS PDF <i class="fas fa-file-pdf"></i>';
     }
 
     function addTag(tagName) {
@@ -157,7 +148,7 @@
     }
 
     function handleKeys(e) { if (e.key === "Tab") { e.preventDefault(); addCode("  "); } }
-    function clearEditor() { if(confirm("Clear?")) { editArea.value = ""; updateLive(); } }
+    function clearEditor() { if(confirm("Muche felben?")) { editArea.value = ""; updateLive(); } }
 
     editArea.addEventListener("scroll", () => {
         document.getElementById("highlighting").scrollTop = editArea.scrollTop;
@@ -165,7 +156,10 @@
     });
 
     window.onload = () => {
-        editArea.value = localStorage.getItem("anondo_editor_code") || "\n<h1>Hello</h1>";
+        // ৩. বেসিক HTML কোড উদাহরণ হিসেবে সেট করা
+        const basicTemplate = "<!DOCTYPE html>\n<html>\n<head>\n  <title>Anondo Editor</title>\n  <style>\n    body { text-align: center; font-family: sans-serif; }\n    h1 { color: #3b82f6; }\n  </style>\n</head>\n<body>\n  <h1>Hello World!</h1>\n  <p>This is a basic HTML project.</p>\n</body>\n</html>";
+        
+        editArea.value = localStorage.getItem("anondo_editor_code") || basicTemplate;
         updateLive();
     };
 </script>
