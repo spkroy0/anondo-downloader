@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anondo HTML Editor - Pro</title>
+    <title>Anondo Pro Editor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -12,56 +12,48 @@
         body { font-family: 'Consolas', monospace; background: #0b1120; height: 100vh; display: flex; flex-direction: column; overflow: hidden; color: white; }
 
         /* RGB Header */
-        .top-header { background: #1e293b; padding: 10px; text-align: center; border-bottom: 2px solid #334155; }
+        .top-header { background: #1e293b; padding: 12px; text-align: center; border-bottom: 2px solid #334155; }
         .top-header h1 { 
             font-size: 16px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold;
             background: linear-gradient(to right, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #ec4899);
             background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
-            animation: rgbTextScroll 3s linear infinite, rgbGlow 1.5s ease-in-out infinite alternate;
+            animation: rgbText 3s linear infinite;
         }
-        @keyframes rgbTextScroll { to { background-position: 200% center; } }
-        @keyframes rgbGlow { from { text-shadow: 0 0 5px #38bdf8; } to { text-shadow: 0 0 15px #38bdf8; } }
+        @keyframes rgbText { to { background-position: 200% center; } }
 
-        /* 2-Line Toolbar */
+        /* Toolbar Layout */
         .toolbar-container { background: #0f172a; border-bottom: 1px solid #334155; }
-        .toolbar-row { display: flex; gap: 5px; padding: 5px 10px; overflow-x: auto; scrollbar-width: none; }
-        .toolbar-row::-webkit-scrollbar { display: none; }
-        .toolbar-row button { background: #334155; color: #38bdf8; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 11px; }
-        
+        .toolbar-row { display: flex; gap: 6px; padding: 6px 10px; overflow-x: auto; scrollbar-width: none; }
+        .toolbar-row button { background: #334155; color: #38bdf8; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 12px; }
         .btn-run { background: #0369a1 !important; color: white !important; }
-        .btn-download { background: #166534 !important; color: white !important; }
-        .btn-save { background: #6d28d9 !important; color: white !important; }
-        .btn-tag { background: #1e293b !important; border: 1px solid #334155 !important; }
+        .btn-save { background: #166534 !important; color: white !important; }
 
-        #tag-status { background: #0f172a; padding: 5px 15px; font-size: 11px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 6px; color: #94a3b8; height: 30px; }
+        #tag-status { background: #0f172a; padding: 6px 15px; font-size: 11px; border-bottom: 1px solid #334155; color: #94a3b8; height: 32px; display: flex; align-items: center; }
 
-        /* Layout Area */
+        /* Editor & Preview Area */
         .main-content { display: flex; flex: 1; height: calc(100vh - 200px); }
-        @media (max-width: 768px) { .main-content { flex-direction: column; } .editor-box, .preview-box { width: 100% !important; height: 50% !important; } }
-
         .editor-box { width: 50%; height: 100%; position: relative; border-right: 1px solid #334155; background: #0d1117; }
-        .preview-box { width: 50%; height: 100%; background: white; position: relative; overflow: hidden; }
+        .preview-box { width: 50%; height: 100%; background: white; position: relative; }
 
-        #editing, #highlighting { padding: 15px; width: 100%; height: 100%; font-size: 14px; line-height: 1.5; position: absolute; top: 0; left: 0; white-space: pre; overflow: auto; font-family: 'Consolas', monospace; }
-        #editing { background: transparent; color: transparent; caret-color: #38bdf8; z-index: 1; outline: none; border: none; resize: none; }
+        #editing, #highlighting { padding: 15px; width: 100%; height: 100%; font-size: 14px; line-height: 1.5; position: absolute; top: 0; left: 0; white-space: pre; overflow: auto; border: none; outline: none; }
+        #editing { background: transparent; color: transparent; caret-color: #38bdf8; z-index: 1; resize: none; }
         #highlighting { z-index: 0; pointer-events: none; }
-        #highlight-content { background: transparent !important; }
         
-        #preview-wrapper { width: 100%; height: 100%; background: white; }
         iframe { width: 100%; height: 100%; border: none; }
+
+        @media (max-width: 768px) { .main-content { flex-direction: column; } .editor-box, .preview-box { width: 100%; height: 50%; } }
     </style>
 </head>
 <body>
 
 <div class="top-header">
-    <h1><i class="fas fa-magic"></i> Html live editor by anondo</h1>
+    <h1><i class="fas fa-code"></i> HTML LIVE EDITOR BY ANONDO</h1>
 </div>
 
 <div class="toolbar-container">
     <div class="toolbar-row">
         <button class="btn-run" onclick="updateLive()">RUN <i class="fas fa-play"></i></button>
-        <button class="btn-download" onclick="downloadCode()">DOWNLOAD <i class="fas fa-file-code"></i></button>
-        <button class="btn-save" onclick="savePreviewImage()">SAVE IMG <i class="fas fa-image"></i></button>
+        <button class="btn-save" onclick="downloadCode()">DOWNLOAD <i class="fas fa-file-download"></i></button>
         <button onclick="addCode('<')"><</button>
         <button onclick="addCode('>')">></button>
         <button onclick="addCode('/')">/</button>
@@ -70,35 +62,30 @@
         <button style="background:#991b1b; color:white;" onclick="clearEditor()"><i class="fas fa-trash"></i></button>
     </div>
     <div class="toolbar-row">
-        <button class="btn-tag" onclick="addTag('html')">HTML</button>
-        <button class="btn-tag" onclick="addTag('head')">Head</button>
-        <button class="btn-tag" onclick="addTag('body')">Body</button>
-        <button class="btn-tag" onclick="addTag('h1')">H1</button>
-        <button class="btn-tag" onclick="addTag('p')">P</button>
-        <button class="btn-tag" onclick="addTag('div')">Div</button>
-        <button class="btn-tag" onclick="addTag('button')">Btn</button>
-        <button class="btn-tag" onclick="addTag('a')">Link</button>
-        <button class="btn-tag" onclick="addTag('img')">Img</button>
-        <button class="btn-tag" onclick="addTag('style')">Style</button>
+        <button onclick="addTag('html')">HTML</button>
+        <button onclick="addTag('head')">Head</button>
+        <button onclick="addTag('body')">Body</button>
+        <button onclick="addTag('h1')">H1</button>
+        <button onclick="addTag('p')">P</button>
+        <button onclick="addTag('div')">Div</button>
+        <button onclick="addTag('button')">Btn</button>
+        <button onclick="addTag('style')">CSS</button>
     </div>
 </div>
 
-<div id="tag-status">Ready</div>
+<div id="tag-status">Ready to Code</div>
 
 <div class="main-content">
     <div class="editor-box">
-        <textarea id="editing" spellcheck="false" oninput="updateLive()" onkeydown="handleKeys(event)" onclick="matchTags()" onkeyup="matchTags()"></textarea>
+        <textarea id="editing" spellcheck="false" oninput="handleInput()" onkeydown="handleKeys(event)"></textarea>
         <pre id="highlighting" aria-hidden="true"><code class="language-html" id="highlight-content"></code></pre>
     </div>
     <div class="preview-box">
-        <div id="preview-wrapper">
-            <iframe id="live-preview"></iframe>
-        </div>
+        <iframe id="live-preview"></iframe>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-
 <script>
     const editArea = document.getElementById("editing");
     const highlightArea = document.getElementById("highlight-content");
@@ -109,30 +96,26 @@
         let code = editArea.value;
         highlightArea.textContent = code;
         Prism.highlightElement(highlightArea);
-
         const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
         doc.open(); doc.write(code); doc.close();
-
         localStorage.setItem("anondo_editor_code", code);
+    }
+
+    function handleInput() {
+        updateLive();
         matchTags();
     }
 
-    function addTag(tagName) {
-        if(tagName === 'img') { addCode('<img src="" alt="">'); return; }
-        addCode(`<${tagName}>`, `</${tagName}>`);
+    function addTag(tag) {
+        addCode(`<${tag}>`, `</${tag}>`);
     }
 
     function addCode(open, close = "") {
         const start = editArea.selectionStart;
         const end = editArea.selectionEnd;
         const text = editArea.value;
-        
         editArea.value = text.substring(0, start) + open + close + text.substring(end);
-        
-        let newPos = start + open.length;
-        if(open.includes('""')) { newPos = start + open.indexOf('""') + 1; }
-        
-        editArea.selectionStart = editArea.selectionEnd = newPos;
+        editArea.selectionStart = editArea.selectionEnd = start + open.length;
         editArea.focus();
         updateLive();
     }
@@ -141,8 +124,38 @@
         const pos = editArea.selectionStart;
         const text = editArea.value;
         const match = text.substring(0, pos).match(/<([a-zA-Z1-6]+)[^>]*$/);
-        
         if (match) {
+            const tag = match[1];
+            statusDiv.innerHTML = text.includes(`</${tag}>`) ? 
+                `<span style="color:#4ade80;">&lt;${tag}&gt; is balanced.</span>` : 
+                `<span style="color:#f87171;">Missing &lt;/${tag}&gt;</span>`;
+        } else {
+            statusDiv.innerText = "Editor Active";
+        }
+    }
+
+    function handleKeys(e) { if (e.key === "Tab") { e.preventDefault(); addCode("  "); } }
+    function clearEditor() { if(confirm("Clear all?")) { editArea.value = ""; updateLive(); } }
+    function downloadCode() {
+        const blob = new Blob([editArea.value], {type: "text/html"});
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "project.html";
+        a.click();
+    }
+
+    editArea.addEventListener("scroll", () => {
+        document.getElementById("highlighting").scrollTop = editArea.scrollTop;
+        document.getElementById("highlighting").scrollLeft = editArea.scrollLeft;
+    });
+
+    window.onload = () => {
+        editArea.value = localStorage.getItem("anondo_editor_code") || "<h1>Hello World!</h1>";
+        updateLive();
+    };
+</script>
+</body>
+</html>
             const tag = match[1];
             if (text.includes(`</${tag}>`)) {
                 statusDiv.innerHTML = `<i class="fas fa-check-circle" style="color:#4ade80;"></i> <span style="color:#4ade80;">&lt;${tag}&gt; tag is matched.</span>`;
