@@ -3,45 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anondo HTML Pro Editor</title>
+    <title>Anondo HTML Live Editor</title>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Consolas', monospace; background: #0b1120; height: 100vh; display: flex; flex-direction: column; overflow: hidden; color: white; }
+        body { font-family: 'Consolas', 'Monaco', monospace; background: #0c1221; height: 100vh; display: flex; flex-direction: column; overflow: hidden; color: #ced4e2; }
 
-        /* RGB Header */
-        .top-header { background: #1e293b; padding: 10px; text-align: center; border-bottom: 2px solid #334155; }
-        .top-header h1 { 
-            font-size: 16px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold;
-            background: linear-gradient(to right, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #ec4899);
-            background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
-            animation: rgbText 3s linear infinite;
+        /* RGB Header Animation */
+        @keyframes rgbText {
+            0% { color: #ff0000; }
+            20% { color: #ff8800; }
+            40% { color: #ffff00; }
+            60% { color: #00ff00; }
+            80% { color: #0088ff; }
+            100% { color: #ff0000; }
         }
-        @keyframes rgbText { to { background-position: 200% center; } }
 
-        /* 2-Line Toolbar */
-        .toolbar-container { background: #0f172a; border-bottom: 1px solid #334155; }
-        .toolbar-row { display: flex; gap: 5px; padding: 6px 10px; overflow-x: auto; scrollbar-width: none; }
-        .toolbar-row button { background: #334155; color: #38bdf8; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; transition: 0.2s; }
-        .toolbar-row button:active { transform: scale(0.95); }
-        .btn-run { background: #0369a1 !important; color: white !important; }
-        .btn-save { background: #166534 !important; color: white !important; }
+        .top-header { 
+            background: #1e293b; 
+            padding: 10px; 
+            text-align: center; 
+            border-bottom: 2px solid #23314c;
+        }
+        .top-header h1 { 
+            font-size: 14px; 
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            animation: rgbText 3s infinite linear; /* RGB Effect */
+        }
 
-        #tag-status { background: #0f172a; padding: 5px 15px; font-size: 11px; border-bottom: 1px solid #334155; height: 32px; display: flex; align-items: center; color: #94a3b8; }
-
-        /* Editor Layout */
-        .main-content { display: flex; flex: 1; height: calc(100vh - 210px); }
-        .editor-box { width: 50%; height: 100%; position: relative; border-right: 1px solid #334155; background: #0d1117; }
-        .preview-box { width: 50%; height: 100%; background: white; }
-
-        #editing, #highlighting { padding: 15px; width: 100%; height: 100%; font-size: 14px; line-height: 1.5; position: absolute; top: 0; left: 0; white-space: pre; overflow: auto; border: none; outline: none; }
-        #editing { background: transparent; color: transparent; caret-color: #38bdf8; z-index: 2; resize: none; }
-        #highlighting { z-index: 1; pointer-events: none; }
+        /* Toolbar Styles */
+        .toolbar { 
+            background: #10162a; 
+            padding: 12px; 
+            display: flex; 
+            gap: 6px; 
+            overflow-x: auto; 
+            border-bottom: 2px solid #23314c;
+            scrollbar-width: none;
+        }
+        .toolbar::-webkit-scrollbar { display: none; }
         
-        iframe { width: 100%; height: 100%; border: none; }
+        .btn { 
+            background: #23314c; color: #a8b2cc; border: none; padding: 8px 12px; 
+            border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px;
+        }
+        .run-btn { background: #1389cf !important; color: white !important; }
+        .download-btn { background: #2f943f !important; color: white !important; }
+        .clear-btn { background: #a22626 !important; color: white !important; }
 
-        @media (max-width: 768px) { .main-content { flex-direction: column; } .editor-box, .preview-box { width: 100%; height: 50%; } }
+        /* Main Content */
+        #content-to-pdf { display: flex; flex: 1; overflow: hidden; background: #0c1221; }
+        .main-content { display: flex; flex: 1; overflow: hidden; }
+
+        @media (max-width: 768px) {
+            .main-content { flex-direction: column; }
+            .editor-box, .preview-box { width: 100% !important; height: 50% !important; }
+        }
+
+        .editor-box { width: 50%; height: 100%; position: relative; border-right: 2px solid #23314c; background: #182033; }
+        .preview-box { width: 50%; height: 100%; background: #ffffff; }
+
+        #editing, #highlighting {
+            margin: 0; padding: 15px; width: 100%; height: 100%;
+            font-size: 13px; line-height: 1.6; position: absolute; top: 0; left: 0;
+            white-space: pre; overflow: auto; border: none; outline: none; tab-size: 2;
+        }
+        #editing { background: transparent; color: transparent; caret-color: #ff607c; z-index: 1; resize: none; }
+        #highlighting { z-index: 0; pointer-events: none; }
+        
+        iframe { width: 100%; height: 100%; border: none; background: white; }
+
+        /* PDF Export Styling */
+        .pdf-header { display: none; padding: 20px; background: #1e293b; color: white; text-align: center; }
     </style>
 </head>
 <body>
@@ -50,37 +89,30 @@
     <h1><i class="fas fa-terminal"></i> HTML LIVE EDITOR BY ANONDO</h1>
 </div>
 
-<div class="toolbar-container">
-    <div class="toolbar-row">
-        <button class="btn-run" onclick="updateLive()">RUN <i class="fas fa-play"></i></button>
-        <button class="btn-save" onclick="downloadCode()">DOWNLOAD <i class="fas fa-download"></i></button>
-        <button onclick="addCode('<')">&lt;</button>
-        <button onclick="addCode('>')">&gt;</button>
-        <button onclick="addCode('/')">/</button>
-        <button onclick="addCode('=')">=</button>
-        <button onclick="addCode('&quot;')">"</button>
-        <button onclick="addCode('!')">!</button>
-        <button style="background:#991b1b; color:white;" onclick="clearEditor()">CLEAR</button>
-    </div>
-    <div class="toolbar-row">
-        <button onclick="addTag('html')">HTML</button>
-        <button onclick="addTag('head')">Head</button>
-        <button onclick="addTag('body')">Body</button>
-        <button onclick="addTag('h1')">H1</button>
-        <button onclick="addTag('p')">P</button>
-        <button onclick="addTag('div')">Div</button>
-        <button onclick="addTag('button')">Btn</button>
-        <button onclick="addTag('style')">CSS</button>
-    </div>
+<div class="toolbar">
+    <button class="btn run-btn" onclick="updateLive()"><i class="fas fa-play"></i> RUN</button>
+    <button class="btn download-btn" onclick="downloadPDF()"><i class="fas fa-file-pdf"></i> DOWNLOAD PDF</button>
+    <button class="btn" onclick="addCode('<')">&lt;</button>
+    <button class="btn" onclick="addCode('>')">&gt;</button>
+    <button class="btn" onclick="addCode('/')">/</button>
+    <button class="btn clear-btn" onclick="clearCode()">CLEAR</button>
 </div>
 
-<div id="tag-status">Editor Ready</div>
+<div class="toolbar" style="padding: 5px 15px; background: #0c1221;">
+    <button class="btn" style="background:transparent; color:#38bdf8;" onclick="addCode('<html>\n')">HTML</button>
+    <button class="btn" style="background:transparent; color:#38bdf8;" onclick="addCode('<head>\n')">Head</button>
+    <button class="btn" style="background:transparent; color:#38bdf8;" onclick="addCode('<body>\n')">Body</button>
+    <button class="btn" style="background:transparent; color:#38bdf8;" onclick="addCode('<h1>')">H1</button>
+    <button class="btn" style="background:transparent; color:#38bdf8;" onclick="addCode('<p>')">P</button>
+    <button class="btn" style="background:transparent; color:#38bdf8;" onclick="addCode('<style>\n')">CSS</button>
+</div>
 
-<div class="main-content">
+<div id="capture-area" class="main-content">
     <div class="editor-box">
-        <textarea id="editing" spellcheck="false" oninput="handleInput(this)" onkeydown="handleKeys(event)"></textarea>
+        <textarea id="editing" spellcheck="false" oninput="handleInput()" onkeydown="handleTab(this, event)"></textarea>
         <pre id="highlighting" aria-hidden="true"><code class="language-html" id="highlight-content"></code></pre>
     </div>
+    
     <div class="preview-box">
         <iframe id="live-preview"></iframe>
     </div>
@@ -92,17 +124,98 @@
     const editArea = document.getElementById("editing");
     const highlightArea = document.getElementById("highlight-content");
     const previewFrame = document.getElementById("live-preview");
-    const statusDiv = document.getElementById("tag-status");
 
-    function updateLive() {
+    function handleInput() {
         let code = editArea.value;
+
+        // Condition: Auto-close on "</"
+        if (code.endsWith("</")) {
+            const pos = editArea.selectionStart;
+            const textBefore = code.substring(0, pos);
+            const matches = textBefore.match(/<([a-zA-Z1-6]+)(?![^>]*\/>)[^>]*>/g);
+            if (matches) {
+                const lastTag = matches[matches.length - 1].match(/<([a-zA-Z1-6]+)/)[1];
+                editArea.value = code + lastTag + ">";
+                editArea.selectionStart = editArea.selectionEnd = pos + lastTag.length + 1;
+            }
+        }
+        
+        updateHighlight();
+        updateLive();
+    }
+
+    function updateHighlight() {
+        let code = editArea.value;
+        if(code[code.length-1] == "\n") code += " ";
         highlightArea.textContent = code;
         Prism.highlightElement(highlightArea);
-
-        const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
-        doc.open(); doc.write(code); doc.close();
-        localStorage.setItem("anondo_editor_code", code);
     }
+
+    function updateLive() {
+        const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+        doc.open();
+        doc.write(editArea.value);
+        doc.close();
+    }
+
+    function addCode(char) {
+        const start = editArea.selectionStart;
+        editArea.value = editArea.value.substring(0, start) + char + editArea.value.substring(editArea.selectionEnd);
+        editArea.selectionStart = editArea.selectionEnd = start + char.length;
+        editArea.focus();
+        handleInput();
+    }
+
+    function clearCode() {
+        if(confirm("Are you sure you want to clear?")) {
+            editArea.value = "";
+            handleInput();
+        }
+    }
+
+    function handleTab(el, e) {
+        if (e.key === "Tab") {
+            e.preventDefault();
+            addCode("  ");
+        }
+    }
+
+    // Scroll Sync
+    editArea.addEventListener("scroll", () => {
+        const pre = document.getElementById("highlighting");
+        pre.scrollTop = editArea.scrollTop;
+        pre.scrollLeft = editArea.scrollLeft;
+    });
+
+    // PDF Download Function
+    function downloadPDF() {
+        const element = document.getElementById('capture-area');
+        const opt = {
+            margin:       0.5,
+            filename:     'Anondo_Project.pdf',
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+        };
+
+        // PDF জেনারেট করার সময় মেসেজ
+        const btn = document.querySelector('.download-btn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> GENERATING...';
+        
+        html2pdf().set(opt).from(element).save().then(() => {
+            btn.innerHTML = '<i class="fas fa-file-pdf"></i> DOWNLOAD PDF';
+        });
+    }
+
+    // Default Code
+    window.onload = () => {
+        editArea.value = "<!DOCTYPE html>\n<html>\n<head>\n  <style>\n    h1 { color: #1389cf; }\n  </style>\n</head>\n<body>\n  <h1>Hello Anondo!</h1>\n  <p>PDF Download functionality is ready.</p>\n</body>\n</html>";
+        handleInput();
+    };
+</script>
+
+</body>
+</html>
 
     function handleInput(el) {
         let val = el.value;
