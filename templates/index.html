@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anondo Pro Editor</title>
+    <title>Anondo HTML Pro Editor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -11,33 +11,33 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Consolas', monospace; background: #0b1120; height: 100vh; display: flex; flex-direction: column; overflow: hidden; color: white; }
 
-        /* RGB Header */
-        .top-header { background: #1e293b; padding: 12px; text-align: center; border-bottom: 2px solid #334155; }
+        /* RGB Glowing Header */
+        .top-header { background: #1e293b; padding: 10px; text-align: center; border-bottom: 2px solid #334155; }
         .top-header h1 { 
-            font-size: 16px; letter-spacing: 2px; text-transform: uppercase; font-weight: bold;
+            font-size: 16px; letter-spacing: 2px; font-weight: bold;
             background: linear-gradient(to right, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #ec4899);
             background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent;
             animation: rgbText 3s linear infinite;
         }
         @keyframes rgbText { to { background-position: 200% center; } }
 
-        /* Toolbar Layout */
+        /* 2-Line Toolbar */
         .toolbar-container { background: #0f172a; border-bottom: 1px solid #334155; }
-        .toolbar-row { display: flex; gap: 6px; padding: 6px 10px; overflow-x: auto; scrollbar-width: none; }
-        .toolbar-row button { background: #334155; color: #38bdf8; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 12px; }
+        .toolbar-row { display: flex; gap: 5px; padding: 6px 10px; overflow-x: auto; scrollbar-width: none; }
+        .toolbar-row button { background: #334155; color: #38bdf8; border: none; padding: 7px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; white-space: nowrap; font-size: 11px; }
         .btn-run { background: #0369a1 !important; color: white !important; }
         .btn-save { background: #166534 !important; color: white !important; }
 
-        #tag-status { background: #0f172a; padding: 6px 15px; font-size: 11px; border-bottom: 1px solid #334155; color: #94a3b8; height: 32px; display: flex; align-items: center; }
+        #tag-status { background: #0f172a; padding: 5px 15px; font-size: 11px; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 8px; height: 32px; color: #94a3b8; }
 
-        /* Editor & Preview Area */
-        .main-content { display: flex; flex: 1; height: calc(100vh - 200px); }
+        /* Editor & Preview Split */
+        .main-content { display: flex; flex: 1; height: calc(100vh - 210px); }
         .editor-box { width: 50%; height: 100%; position: relative; border-right: 1px solid #334155; background: #0d1117; }
-        .preview-box { width: 50%; height: 100%; background: white; position: relative; }
+        .preview-box { width: 50%; height: 100%; background: white; }
 
         #editing, #highlighting { padding: 15px; width: 100%; height: 100%; font-size: 14px; line-height: 1.5; position: absolute; top: 0; left: 0; white-space: pre; overflow: auto; border: none; outline: none; }
-        #editing { background: transparent; color: transparent; caret-color: #38bdf8; z-index: 1; resize: none; }
-        #highlighting { z-index: 0; pointer-events: none; }
+        #editing { background: transparent; color: transparent; caret-color: #38bdf8; z-index: 2; resize: none; }
+        #highlighting { z-index: 1; pointer-events: none; }
         
         iframe { width: 100%; height: 100%; border: none; }
 
@@ -47,18 +47,21 @@
 <body>
 
 <div class="top-header">
-    <h1><i class="fas fa-code"></i> HTML LIVE EDITOR BY ANONDO</h1>
+    <h1><i class="fas fa-magic"></i> HTML LIVE EDITOR BY ANONDO</h1>
 </div>
 
 <div class="toolbar-container">
     <div class="toolbar-row">
         <button class="btn-run" onclick="updateLive()">RUN <i class="fas fa-play"></i></button>
-        <button class="btn-save" onclick="downloadCode()">DOWNLOAD <i class="fas fa-file-download"></i></button>
+        <button class="btn-save" onclick="downloadCode()">DOWNLOAD <i class="fas fa-file-code"></i></button>
         <button onclick="addCode('<')"><</button>
         <button onclick="addCode('>')">></button>
         <button onclick="addCode('/')">/</button>
         <button onclick="addCode('=')">=</button>
         <button onclick="addCode('&quot;')">"</button>
+        <button onclick="addCode('!')">!</button>
+        <button onclick="addCode('{')">{</button>
+        <button onclick="addCode('}')">}</button>
         <button style="background:#991b1b; color:white;" onclick="clearEditor()"><i class="fas fa-trash"></i></button>
     </div>
     <div class="toolbar-row">
@@ -69,23 +72,26 @@
         <button onclick="addTag('p')">P</button>
         <button onclick="addTag('div')">Div</button>
         <button onclick="addTag('button')">Btn</button>
+        <button onclick="addTag('a')">Link</button>
+        <button onclick="addTag('img')">Img</button>
         <button onclick="addTag('style')">CSS</button>
     </div>
 </div>
 
-<div id="tag-status">Ready to Code</div>
+<div id="tag-status"><i class="fas fa-keyboard"></i> Ready</div>
 
 <div class="main-content">
     <div class="editor-box">
-        <textarea id="editing" spellcheck="false" oninput="handleInput()" onkeydown="handleKeys(event)"></textarea>
+        <textarea id="editing" spellcheck="false" oninput="handleInput(this)" onkeydown="handleKeys(event)" onclick="matchTags()" onkeyup="matchTags()"></textarea>
         <pre id="highlighting" aria-hidden="true"><code class="language-html" id="highlight-content"></code></pre>
     </div>
-    <div class="preview-box">
+    <div class="preview-box" id="preview-wrapper">
         <iframe id="live-preview"></iframe>
     </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+
 <script>
     const editArea = document.getElementById("editing");
     const highlightArea = document.getElementById("highlight-content");
@@ -96,18 +102,35 @@
         let code = editArea.value;
         highlightArea.textContent = code;
         Prism.highlightElement(highlightArea);
+
         const doc = previewFrame.contentDocument || previewFrame.contentWindow.document;
         doc.open(); doc.write(code); doc.close();
+
         localStorage.setItem("anondo_editor_code", code);
     }
 
-    function handleInput() {
+    // অটো ক্লোজ এবং স্মার্ট ইনপুট
+    function handleInput(el) {
+        let val = el.value;
+        let pos = el.selectionStart;
+
+        if (val.substring(pos-2, pos) === "</") {
+            let textBefore = val.substring(0, pos-2);
+            let tags = textBefore.match(/<([a-zA-Z1-6]+)(?: [^>]*)?>/g);
+            if (tags) {
+                let lastTag = tags[tags.length - 1].match(/<([a-zA-Z1-6]+)/)[1];
+                let closeTag = lastTag + ">";
+                el.value = textBefore + "</" + closeTag + val.substring(pos);
+                el.selectionStart = el.selectionEnd = pos + closeTag.length;
+            }
+        }
         updateLive();
         matchTags();
     }
 
-    function addTag(tag) {
-        addCode(`<${tag}>`, `</${tag}>`);
+    function addTag(tagName) {
+        if(tagName === 'img') { addCode('<img src="" alt="">'); return; }
+        addCode(`<${tagName}>`, `</${tagName}>`);
     }
 
     function addCode(open, close = "") {
@@ -115,7 +138,9 @@
         const end = editArea.selectionEnd;
         const text = editArea.value;
         editArea.value = text.substring(0, start) + open + close + text.substring(end);
-        editArea.selectionStart = editArea.selectionEnd = start + open.length;
+        let newPos = start + open.length;
+        if(open.includes('""')) newPos = start + open.indexOf('""') + 1;
+        editArea.selectionStart = editArea.selectionEnd = newPos;
         editArea.focus();
         updateLive();
     }
@@ -127,22 +152,39 @@
         if (match) {
             const tag = match[1];
             statusDiv.innerHTML = text.includes(`</${tag}>`) ? 
-                `<span style="color:#4ade80;">&lt;${tag}&gt; is balanced.</span>` : 
-                `<span style="color:#f87171;">Missing &lt;/${tag}&gt;</span>`;
+                `<i class="fas fa-check-circle" style="color:#4ade80;"></i> &lt;${tag}&gt; matched.` : 
+                `<i class="fas fa-times-circle" style="color:#f87171;"></i> Missing &lt;/${tag}&gt;`;
         } else {
-            statusDiv.innerText = "Editor Active";
+            statusDiv.innerHTML = `<i class="fas fa-keyboard"></i> Editor Active`;
         }
     }
 
     function handleKeys(e) { if (e.key === "Tab") { e.preventDefault(); addCode("  "); } }
-    function clearEditor() { if(confirm("Clear all?")) { editArea.value = ""; updateLive(); } }
+    
+    function clearEditor() { if(confirm("Sob code muche felte chan?")) { editArea.value = ""; updateLive(); } }
+
     function downloadCode() {
         const blob = new Blob([editArea.value], {type: "text/html"});
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = "project.html";
+        a.download = "anondo_code.html";
         a.click();
     }
+
+    editArea.addEventListener("scroll", () => {
+        document.getElementById("highlighting").scrollTop = editArea.scrollTop;
+        document.getElementById("highlighting").scrollLeft = editArea.scrollLeft;
+    });
+
+    window.onload = () => {
+        const basic = "<!DOCTYPE html>\n<html>\n<head>\n  <title>Anondo Editor</title>\n</head>\n<body>\n  <h1>Welcome to Anondo Editor</h1>\n  <p>Your code renders live!</p>\n</body>\n</html>";
+        editArea.value = localStorage.getItem("anondo_editor_code") || basic;
+        updateLive();
+    };
+</script>
+
+</body>
+</html>
 
     editArea.addEventListener("scroll", () => {
         document.getElementById("highlighting").scrollTop = editArea.scrollTop;
